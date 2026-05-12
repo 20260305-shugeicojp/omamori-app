@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#265FAC"/>
+  <rect x="0" y="0" width="512" height="20" fill="#D0372A"/>
+  <rect x="0" y="492" width="512" height="20" fill="#F5C400"/>
+  <text x="256" y="310" font-family="sans-serif" font-weight="bold" font-size="230" fill="white" text-anchor="middle">価</text>
+</svg>

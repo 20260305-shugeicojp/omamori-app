@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>わたしの価値観とお守り言葉</title>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="お守り言葉">
+  <meta name="theme-color" content="#265FAC">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* ブルーナカラー6色 */
+    --bruna-red:    #D0372A;
+    --bruna-blue:   #265FAC;
+    --bruna-green:  #3D8A3E;
+    --bruna-yellow: #F5C400;
+    --bruna-brown:  #8B5B2B;
+    --bruna-gray:   #9B9B8A;
+    --bruna-white:  #FFFFFF;
+    --bruna-black:  #1A1A1A;
+
+    /* UI割り当て */
+    --bg:           #F7F5F0;       /* 温かみのある白 */
+    --surface:      #FFFFFF;
+    --primary:      var(--bruna-blue);
+    --primary-dark: #1A4A8A;
+    --accent:       var(--bruna-red);
+    --accent-faint: #FAE8E6;
+    --highlight:    var(--bruna-yellow);
+    --border:       #D8D4C8;
+    --text:         var(--bruna-black);
+    --text-mid:     #4A4A4A;
+    --text-faint:   #888880;
+    --sans: 'Noto Sans JP', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 400;
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ══ INTRO ══ */
+  #screen-intro {
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    background: var(--bruna-blue);
+    color: #fff;
+  }
+  .intro-badge {
+    display: inline-block;
+    background: var(--bruna-yellow);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 4px 14px;
+    margin-bottom: 1.8rem;
+  }
+  .intro-title {
+    font-size: clamp(1.7rem, 5vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.04em;
+  }
+  .intro-sub {
+    font-size: 0.9rem;
+    line-height: 2;
+    max-width: 360px;
+    margin: 0 auto 2.5rem;
+    opacity: 0.88;
+  }
+  .btn-primary {
+    display: inline-block;
+    padding: 0.9rem 2.8rem;
+    background: var(--bruna-red);
+    color: #fff;
+    border: none;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.12s;
+  }
+  .btn-primary:hover { background: #B02B20; transform: translateY(-2px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .intro-target {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--bruna-yellow);
+    margin-bottom: 1rem;
+  }
+  .intro-copyright {
+    position: absolute;
+    bottom: 1.2rem;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.08em;
+    font-weight: 400;
+  }
+
+  /* ══ STEP HEADER ══ */
+  .step-header {
+    padding: 0;
+    border-bottom: 3px solid var(--bruna-blue);
+    display: flex;
+    align-items: stretch;
+  }
+  .step-num-block {
+    background: var(--bruna-blue);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 0.9rem 1.2rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .step-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    padding: 0.9rem 1.4rem;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.04em;
+  }
+
+  .step-body { flex: 1; padding: 1.5rem 1.6rem; overflow-y: auto; }
+  .step-note {
+    font-size: 0.83rem;
+    color: var(--text-mid);
+    margin-bottom: 1.2rem;
+    line-height: 1.9;
+    background: #EEF4FF;
+    border-left: 4px solid var(--bruna-blue);
+    padding: 0.7rem 1rem;
+  }
+
+  .step-footer {
+    padding: 1rem 1.6rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: var(--surface);
+  }
+  .btn-next {
+    padding: 0.7rem 2rem;
+    background: var(--bruna-blue);
+    color: #fff;
+    border: none;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 0.18s;
+  }
+  .btn-next:hover { background: var(--primary-dark); }
+  .btn-next:disabled { background: var(--border); color: var(--text-faint); cursor: default; }
+  .btn-back {
+    padding: 0.7rem 1.4rem;
+    background: transparent;
+    color: var(--text-faint);
+    border: 1.5px solid var(--border);
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .btn-back:hover { border-color: var(--text-mid); }
+
+  /* ══ カテゴリータブ ══ */
+  .cat-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+  }
+  .cat-tab {
+    padding: 0.55rem 1.1rem;
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-faint);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.03em;
+  }
+  .cat-tab:hover { color: var(--primary); }
+  .cat-tab.active { color: var(--primary); border-bottom-color: var(--bruna-red); font-weight: 700; }
+
+  .cat-panel { display: none; }
+  .cat-panel.active { display: block; }
+  .cat-desc {
+    font-size: 0.78rem;
+    color: var(--text-mid);
+    margin-bottom: 1rem;
+    line-height: 1.7;
+  }
+
+  .selected-count {
+    display: inline-block;
+    font-size: 0.82rem;
+    color: var(--bruna-red);
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    background: var(--accent-faint);
+    padding: 3px 10px;
+  }
+
+  /* ══ pill + tooltip ══ */
+  .values-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .val-wrap { position: relative; display: inline-block; }
+  .val-pill {
+    padding: 7px 18px;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    color: var(--text-mid);
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+    display: block;
+  }
+  .val-pill:hover { border-color: var(--bruna-blue); color: var(--bruna-blue); background: #EEF4FF; }
+  .val-pill.selected { background: var(--bruna-blue); border-color: var(--bruna-blue); color: #fff; font-weight: 700; }
+
+  .v-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bruna-black);
+    color: #fff;
+    font-size: 0.73rem;
+    line-height: 1.6;
+    padding: 7px 11px;
+    width: 190px;
+    z-index: 200;
+    pointer-events: none;
+    letter-spacing: 0.02em;
+    transition: opacity 0.15s;
+    font-weight: 400;
+  }
+  .v-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--bruna-black);
+  }
+  .val-wrap:hover .v-tooltip { visibility: visible; opacity: 1; }
+
+  /* ══ STEP 2 core ══ */
+  .core-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 2rem; }
+  .core-card {
+    padding: 1.1rem 1rem;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .core-card:hover { border-color: var(--bruna-blue); background: #EEF4FF; }
+  .core-card.selected { background: var(--bruna-red); border-color: var(--bruna-red); }
+  .core-label { font-size: 1.05rem; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px; }
+  .core-card.selected .core-label { color: #fff; }
+  .core-sub { font-size: 0.7rem; color: var(--text-faint); line-height: 1.5; display: block; }
+  .core-card.selected .core-sub { color: rgba(255,255,255,0.8); }
+  .core-limit-note { font-size: 0.82rem; color: var(--text-faint); margin-bottom: 1rem; font-weight: 500; }
+
+  /* ══ STEP 3 ══ */
+  .question-block {
+    background: var(--surface);
+    border: 2px solid var(--bruna-blue);
+    padding: 1.6rem;
+    margin-bottom: 1.2rem;
+  }
+  .question-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--bruna-blue);
+    letter-spacing: 0.18em;
+    margin-bottom: 0.7rem;
+  }
+  .question-text {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+  .question-hint {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    line-height: 1.8;
+    border-left: 3px solid var(--bruna-yellow);
+    padding-left: 0.8rem;
+  }
+  .answer-area {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--text);
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.8;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .answer-area:focus { border-color: var(--bruna-blue); }
+  .answer-area::placeholder { color: var(--text-faint); }
+
+  /* ══ STEP 4 ══ */
+  .omamori-intro { font-size: 0.85rem; color: var(--text-mid); line-height: 2; margin-bottom: 1.4rem; }
+  .suggestion-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.4rem; }
+  .suggestion-item {
+    padding: 0.9rem 1.2rem;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    line-height: 1.7;
+    font-family: var(--sans);
+  }
+  .suggestion-item:hover { border-color: var(--bruna-blue); background: #EEF4FF; color: var(--bruna-blue); }
+  .suggestion-item.selected { background: var(--bruna-red); border-color: var(--bruna-red); color: #fff; font-weight: 700; }
+  .divider-text { text-align: center; font-size: 0.78rem; color: var(--text-faint); letter-spacing: 0.1em; margin: 1rem 0; font-weight: 500; }
+  .custom-word-input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .custom-word-input:focus { border-color: var(--bruna-blue); }
+  .custom-word-input::placeholder { color: var(--text-faint); font-size: 0.85rem; font-weight: 400; }
+
+  /* ══ RESULT ══ */
+  #screen-result { align-items: center; padding: 2rem 1.4rem; }
+  .result-inner { width: 100%; max-width: 560px; margin: 0 auto; animation: fadeIn 0.4s ease forwards; }
+
+  .result-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--bruna-blue);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .values-map {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    padding: 1.4rem;
+    margin-bottom: 1.4rem;
+  }
+  .map-layers { display: flex; flex-direction: column; gap: 14px; }
+  .map-layer { display: flex; align-items: flex-start; gap: 1rem; }
+  .layer-label { font-size: 0.7rem; font-weight: 700; color: var(--text-faint); letter-spacing: 0.08em; min-width: 58px; padding-top: 5px; }
+  .layer-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+  .result-pill { padding: 4px 14px; font-size: 0.85rem; font-weight: 500; border: 2px solid var(--border); color: var(--text-mid); }
+  .result-pill.core { background: var(--bruna-red); border-color: var(--bruna-red); color: #fff; font-weight: 700; }
+
+  .answer-display { background: #FFFBEA; border-left: 4px solid var(--bruna-yellow); padding: 1rem 1.2rem; margin-bottom: 1.4rem; }
+  .answer-display-label { font-size: 0.7rem; font-weight: 700; color: var(--bruna-brown); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+  .answer-display-text { font-size: 0.88rem; color: var(--text-mid); line-height: 1.9; }
+
+  .omamori-card {
+    background: var(--bruna-blue);
+    padding: 2.8rem 2rem;
+    text-align: center;
+    margin-bottom: 1.4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .omamori-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: var(--bruna-red);
+  }
+  .omamori-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 6px;
+    background: var(--bruna-yellow);
+  }
+  .omamori-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.2em;
+    margin-bottom: 1.2rem;
+  }
+  .omamori-word {
+    font-size: clamp(1.1rem, 3.5vw, 1.55rem);
+    font-weight: 700;
+    line-height: 1.8;
+    color: #fff;
+    letter-spacing: 0.05em;
+  }
+
+  .result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem; }
+  .btn-print {
+    padding: 0.7rem 1.8rem;
+    border: 2px solid var(--bruna-blue);
+    color: var(--bruna-blue);
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-print:hover { background: var(--bruna-blue); color: #fff; }
+  .btn-restart {
+    padding: 0.7rem 1.8rem;
+    border: 2px solid var(--border);
+    color: var(--text-faint);
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-restart:hover { border-color: var(--text-mid); color: var(--text-mid); }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @media print {
+    #screen-intro,#screen-s1,#screen-s2,#screen-s3,#screen-s4 { display: none !important; }
+    #screen-result { display: flex !important; padding: 1rem; }
+    .result-actions { display: none !important; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div class="screen active" id="screen-intro">
+  <div class="intro-badge">価値観ワーク</div>
+  <h1 class="intro-title">わたしの価値観と<br>お守り言葉</h1>
+  <p class="intro-target">手芸・ハンドメイド作家、講師として活動するすべての方へ</p>
+  <p class="intro-sub">活動に迷ったとき、自分の大切な軸に戻れる言葉を見つけます。直感に従って、ゆっくり進んでください。</p>
+  <button class="btn-primary" onclick="go('screen-s1')">はじめる</button>
+  <p class="intro-copyright">© 株式会社手芸 -The Shugei-</p>
+</div>
+
+<!-- STEP 1 -->
+<div class="screen" id="screen-s1">
+  <div class="step-header">
+    <div class="step-num-block">STEP 01</div>
+    <div class="step-title">直感で選ぶ</div>
+  </div>
+  <div class="step-body">
+    <p class="step-note">4つのカテゴリーに分かれています。言葉にカーソルを合わせると意味が表示されます。ピンときたものを選んでください（3個以上）。</p>
+    <span class="selected-count" id="s1-count">0 個選択中</span>
+    <div class="cat-tabs" id="cat-tabs"></div>
+    <div id="cat-panels"></div>
+  </div>
+  <div class="step-footer">
+    <button class="btn-next" id="s1-next" disabled onclick="buildCoreGrid(); go('screen-s2')">次へ →</button>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="screen" id="screen-s2">
+  <div class="step-header">
+    <div class="step-num-block">STEP 02</div>
+    <div class="step-title">核心を見つける</div>
+  </div>
+  <div class="step-body">
+    <p class="step-note">選んだ中で「これを失うと自分でなくなる気がする」ものを1〜3個だけ選んでください。</p>
+    <p class="core-limit-note" id="s2-count">0 / 3個まで</p>
+    <div class="core-grid" id="core-grid"></div>
+  </div>
+  <div class="step-footer">
+    <button class="btn-back" onclick="go('screen-s1')">← 戻る</button>
+    <button class="btn-next" id="s2-next" disabled onclick="go('screen-s3')">次へ →</button>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="screen" id="screen-s3">
+  <div class="step-header">
+    <div class="step-num-block">STEP 03</div>
+    <div class="step-title">活動と向き合う</div>
+  </div>
+  <div class="step-body">
+    <div class="question-block">
+      <p class="question-label">問い</p>
+      <p class="question-text">あなたが「このままでいいのか」と迷うのは、どんな場面ですか？</p>
+      <p class="question-hint">例：他の作家と比べてしまうとき／生徒の反応が気になるとき／値段が決められないとき</p>
+    </div>
+    <textarea class="answer-area" id="s3-answer" placeholder="思いつくまま書いてみてください。正解はありません。"></textarea>
+  </div>
+  <div class="step-footer">
+    <button class="btn-back" onclick="go('screen-s2')">← 戻る</button>
+    <button class="btn-next" onclick="buildSuggestions(); go('screen-s4')">次へ →</button>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="screen" id="screen-s4">
+  <div class="step-header">
+    <div class="step-num-block">STEP 04</div>
+    <div class="step-title">お守り言葉を選ぶ</div>
+  </div>
+  <div class="step-body">
+    <p class="omamori-intro">迷ったとき、傷ついたとき、この言葉に戻ってきてください。ピンとくるものを一つ選ぶか、自分の言葉で書いてください。</p>
+    <div class="suggestion-list" id="suggestion-list"></div>
+    <div class="divider-text">── または、自分の言葉で ──</div>
+    <input class="custom-word-input" type="text" id="custom-word" placeholder="自分だけのお守り言葉を書いてください" oninput="onCustomInput()">
+  </div>
+  <div class="step-footer">
+    <button class="btn-back" onclick="go('screen-s3')">← 戻る</button>
+    <button class="btn-next" id="s4-next" disabled onclick="buildResult(); go('screen-result')">完成させる →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="screen-result">
+  <div class="result-inner">
+    <span class="result-section-label">わたしの価値観マップ</span>
+    <div class="values-map">
+      <div class="map-layers">
+        <div class="map-layer">
+          <span class="layer-label">核心</span>
+          <div class="layer-pills" id="result-core"></div>
+        </div>
+        <div class="map-layer">
+          <span class="layer-label">大切なもの</span>
+          <div class="layer-pills" id="result-others"></div>
+        </div>
+      </div>
+    </div>
+    <div id="result-answer-block" style="display:none">
+      <div class="answer-display">
+        <p class="answer-display-label">迷う場面</p>
+        <p class="answer-display-text" id="result-answer-text"></p>
+      </div>
+    </div>
+    <span class="result-section-label">わたしのお守り言葉</span>
+    <div class="omamori-card">
+      <p class="omamori-label">お守り言葉</p>
+      <p class="omamori-word" id="result-omamori"></p>
+    </div>
+    <div class="result-actions">
+      <button class="btn-print" onclick="window.print()">印刷・保存する</button>
+      <button class="btn-restart" onclick="restart()">最初からやり直す</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = [
+  {
+    id: 'self', label: '自分の内側',
+    desc: '自分の内面・ありかた・成長に関わる価値観です。',
+    values: [
+      { name: '受容', desc: 'ありのままの自分を受け入れること' },
+      { name: '自尊', desc: '自分に自信と誇りを持って生きること' },
+      { name: '自治', desc: '人まかせにせず、自分で決めること' },
+      { name: '自知', desc: '自分自身を深く理解していること' },
+      { name: '自制', desc: '自分の行動を自分でコントロールすること' },
+      { name: '成長', desc: '変化しながら成長し続けること' },
+      { name: '精神', desc: '精神的に成熟・成長していくこと' },
+      { name: '平安', desc: '内面の穏やかさと平和を保つこと' },
+      { name: '目的', desc: '人生の意味や方向性を持つこと' },
+      { name: '希望', desc: 'ポジティブで楽観的に生きること' },
+      { name: '独立', desc: '他者に依存せず自立して生きること' },
+      { name: '開放', desc: '新たな体験・発想・選択肢に心を開くこと' },
+      { name: '謙遜', desc: '驕らず控えめに生きること' },
+      { name: '真実', desc: '自分が正しいと思うとおりに行動すること' },
+      { name: '正直', desc: 'ウソをつかず、正直に生きること' },
+      { name: '合理', desc: '理性と論理に従って考え、動くこと' },
+      { name: '現在', desc: '今この瞬間に集中して生きること' },
+      { name: '反抗', desc: '権威やルールに疑問を持ち、挑むこと' },
+      { name: '信教', desc: '自分を超えた存在の意思を考えること' },
+    ]
+  },
+  {
+    id: 'create', label: '創造・仕事',
+    desc: '作ること・表現すること・活動することに関わる価値観です。',
+    values: [
+      { name: '達成', desc: '何か重要なことを成し遂げること' },
+      { name: '挑戦', desc: '難しい問題や仕事に積極的に取り組むこと' },
+      { name: '創造', desc: '新しくて斬新なアイデアや作品を生み出すこと' },
+      { name: '勤勉', desc: '自分の仕事に一生懸命に取り組むこと' },
+      { name: '熟達', desc: '自分の仕事や技術に深く習熟すること' },
+      { name: '知識', desc: '価値ある知識を学び、生み出すこと' },
+      { name: '冒険', desc: '新しくてワクワクする体験をすること' },
+      { name: '変化', desc: '変化に富んだバラエティ豊かな人生を送ること' },
+      { name: '情熱', desc: '活動や発想に深い熱意と感情を持つこと' },
+      { name: '美的', desc: '身のまわりの美しいものを感じ、味わうこと' },
+      { name: '魅力', desc: '自分の魅力を保ち、他者に良い印象を与えること' },
+      { name: '正確', desc: '自分の意見や信念を誠実に正しく伝えること' },
+      { name: '権威', desc: '他者に責任を持って指導する立場に立つこと' },
+      { name: '名声', desc: '有名になり、広く存在を認められること' },
+      { name: '危険', desc: 'リスクを取ってチャンスをつかむこと' },
+      { name: '責任', desc: '責任感を持って行動し、義務を果たすこと' },
+      { name: '義務', desc: '自分の義務と役割をきちんと果たすこと' },
+    ]
+  },
+  {
+    id: 'relation', label: '人とのつながり',
+    desc: '他者との関係・コミュニティ・愛情に関わる価値観です。',
+    values: [
+      { name: '寵愛', desc: '親しい人から大切に愛されること' },
+      { name: '愛慕', desc: '誰かを深く愛し、愛情を与えること' },
+      { name: '友情', desc: '親密で助け合える友人と関わること' },
+      { name: '家族', desc: '幸福で愛に満ちた家庭を築くこと' },
+      { name: '貢献', desc: '社会や世界の役に立つことをすること' },
+      { name: '協調', desc: '他者と協力して何かを成し遂げること' },
+      { name: '庇護', desc: '他者の面倒を見て、守ること' },
+      { name: '慈愛', desc: '他者を心配し、積極的に助けること' },
+      { name: '有益', desc: '他人の役に立つことをすること' },
+      { name: '配慮', desc: '他人を気づかい、丁寧に世話をすること' },
+      { name: '礼儀', desc: '他者に誠実で礼儀正しく接すること' },
+      { name: '正義', desc: 'すべての人を公平に扱うこと' },
+      { name: '寛容', desc: '自分と違う存在を尊重し受け入れること' },
+      { name: '許し', desc: '他人を許しながら生きること' },
+      { name: '親密', desc: 'プライベートな体験を他者とシェアすること' },
+      { name: '献身', desc: '誰かや何かに尽くし、奉仕すること' },
+      { name: '誓約', desc: '絶対に破れない約束や誓いを結ぶこと' },
+      { name: '貞節', desc: 'パートナーに誠実に生きること' },
+      { name: '単婚', desc: '唯一の愛し合える相手を見つけること' },
+      { name: '恋愛', desc: '燃えるような恋愛をすること' },
+      { name: '人気', desc: '多くの人に好かれ、慕われること' },
+    ]
+  },
+  {
+    id: 'life', label: '暮らし・心地よさ',
+    desc: '日々の生活・身体・快適さに関わる価値観です。',
+    values: [
+      { name: '健康', desc: '健やかで体調よく生きること' },
+      { name: '体力', desc: '丈夫で強い身体を保つこと' },
+      { name: '快適', desc: '喜びに満ちた快適な人生を送ること' },
+      { name: '快楽', desc: '良い気分になり、喜びを感じること' },
+      { name: '愉楽', desc: '遊んで楽しむことを大切にすること' },
+      { name: '余暇', desc: '自分の時間をリラックスして楽しむこと' },
+      { name: '笑い', desc: '人生や世界のユーモラスな側面を見ること' },
+      { name: '安全', desc: '安心感を持って生きること' },
+      { name: '安定', desc: 'いつも一定した変化のない生活を送ること' },
+      { name: '秩序', desc: '整理され、秩序のある生活を送ること' },
+      { name: '単純', desc: 'シンプルでミニマルな暮らしをすること' },
+      { name: '孤独', desc: '一人でいられる時間と空間を持つこと' },
+      { name: '調和', desc: '周囲の環境と調和しながら生きること' },
+      { name: '適度', desc: '過剰を避けて、ほどよいバランスを保つこと' },
+      { name: '柔軟', desc: '新たな環境にも自然になじむこと' },
+      { name: '伝統', desc: '過去から受け継がれてきたパターンを大切にすること' },
+      { name: '受諾', desc: 'ありのままの現実を受け入れること' },
+      { name: '寛大', desc: '自分の持ち物や時間を惜しみなく与えること' },
+      { name: '現実', desc: '現実的・実践的にふるまうこと' },
+      { name: '興奮', desc: 'スリルと刺激に満ちた人生を送ること' },
+      { name: '権力', desc: '他者に影響を与える力を持つこと' },
+      { name: '性愛', desc: '満足のいく性生活を大切にすること' },
+    ]
+  }
+];
+
+const SUGGESTIONS = [
+  "他人の言動は、わたしの価値とは無関係だ。",
+  "迷ったとき、わたしの核心に戻ればいい。",
+  "わたしの活動は、わたしの価値観から生まれている。",
+  "比べなくていい。わたしにはわたしの軸がある。",
+  "揺れてもいい。でも、わたしの芯は動かない。",
+  "評価は変わる。でも、わたしが大切にするものは変わらない。",
+];
+
+let selectedValues = new Set();
+let coreValues = new Set();
+let selectedOmamori = '';
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// タブ＋パネル生成
+const tabsEl = document.getElementById('cat-tabs');
+const panelsEl = document.getElementById('cat-panels');
+
+CATEGORIES.forEach((cat, ci) => {
+  const tab = document.createElement('button');
+  tab.type = 'button';
+  tab.className = 'cat-tab' + (ci === 0 ? ' active' : '');
+  tab.textContent = cat.label;
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.cat-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + cat.id).classList.add('active');
+  });
+  tabsEl.appendChild(tab);
+
+  const panel = document.createElement('div');
+  panel.className = 'cat-panel' + (ci === 0 ? ' active' : '');
+  panel.id = 'panel-' + cat.id;
+
+  const desc = document.createElement('p');
+  desc.className = 'cat-desc';
+  desc.textContent = cat.desc;
+  panel.appendChild(desc);
+
+  const grid = document.createElement('div');
+  grid.className = 'values-grid';
+
+  cat.values.forEach(v => {
+    const wrap = document.createElement('div');
+    wrap.className = 'val-wrap';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'val-pill';
+    btn.textContent = v.name;
+    btn.addEventListener('click', () => {
+      if (selectedValues.has(v.name)) {
+        selectedValues.delete(v.name);
+        btn.classList.remove('selected');
+      } else {
+        selectedValues.add(v.name);
+        btn.classList.add('selected');
+      }
+      document.getElementById('s1-count').textContent = selectedValues.size + ' 個選択中';
+      document.getElementById('s1-next').disabled = selectedValues.size < 3;
+    });
+
+    const tip = document.createElement('div');
+    tip.className = 'v-tooltip';
+    tip.textContent = v.desc;
+
+    wrap.appendChild(btn);
+    wrap.appendChild(tip);
+    grid.appendChild(wrap);
+  });
+
+  panel.appendChild(grid);
+  panelsEl.appendChild(panel);
+});
+
+function buildCoreGrid() {
+  const cg = document.getElementById('core-grid');
+  cg.innerHTML = '';
+  coreValues.clear();
+  document.getElementById('s2-count').textContent = '0 / 3個まで';
+  document.getElementById('s2-next').disabled = true;
+
+  const allVals = CATEGORIES.flatMap(c => c.values);
+  [...selectedValues].forEach(name => {
+    const vdata = allVals.find(v => v.name === name);
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'core-card';
+    card.innerHTML = '<span class="core-label">' + name + '</span><span class="core-sub">' + (vdata ? vdata.desc : '') + '</span>';
+    card.addEventListener('click', () => {
+      if (coreValues.has(name)) {
+        coreValues.delete(name);
+        card.classList.remove('selected');
+      } else {
+        if (coreValues.size >= 3) return;
+        coreValues.add(name);
+        card.classList.add('selected');
+      }
+      document.getElementById('s2-count').textContent = coreValues.size + ' / 3個まで';
+      document.getElementById('s2-next').disabled = coreValues.size < 1;
+    });
+    cg.appendChild(card);
+  });
+}
+
+function buildSuggestions() {
+  const list = document.getElementById('suggestion-list');
+  list.innerHTML = '';
+  selectedOmamori = '';
+  document.getElementById('s4-next').disabled = true;
+  document.getElementById('custom-word').value = '';
+
+  SUGGESTIONS.forEach(text => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'suggestion-item';
+    btn.textContent = text;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.suggestion-item').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('custom-word').value = '';
+      selectedOmamori = text;
+      document.getElementById('s4-next').disabled = false;
+    });
+    list.appendChild(btn);
+  });
+}
+
+function onCustomInput() {
+  const val = document.getElementById('custom-word').value.trim();
+  document.querySelectorAll('.suggestion-item').forEach(b => b.classList.remove('selected'));
+  selectedOmamori = val;
+  document.getElementById('s4-next').disabled = val.length < 2;
+}
+
+function buildResult() {
+  const coreEl = document.getElementById('result-core');
+  const othersEl = document.getElementById('result-others');
+  coreEl.innerHTML = '';
+  othersEl.innerHTML = '';
+  [...coreValues].forEach(v => {
+    const p = document.createElement('span');
+    p.className = 'result-pill core';
+    p.textContent = v;
+    coreEl.appendChild(p);
+  });
+  [...selectedValues].filter(v => !coreValues.has(v)).forEach(v => {
+    const p = document.createElement('span');
+    p.className = 'result-pill';
+    p.textContent = v;
+    othersEl.appendChild(p);
+  });
+  const answer = document.getElementById('s3-answer').value.trim();
+  if (answer) {
+    document.getElementById('result-answer-block').style.display = 'block';
+    document.getElementById('result-answer-text').textContent = answer;
+  } else {
+    document.getElementById('result-answer-block').style.display = 'none';
+  }
+  const omamori = document.getElementById('custom-word').value.trim() || selectedOmamori;
+  document.getElementById('result-omamori').textContent = omamori;
+}
+
+function restart() {
+  selectedValues.clear();
+  coreValues.clear();
+  selectedOmamori = '';
+  document.getElementById('s3-answer').value = '';
+  document.getElementById('custom-word').value = '';
+  document.querySelectorAll('.val-pill').forEach(p => p.classList.remove('selected'));
+  document.querySelectorAll('.cat-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+  document.querySelectorAll('.cat-panel').forEach((p, i) => p.classList.toggle('active', i === 0));
+  document.getElementById('s1-count').textContent = '0 個選択中';
+  document.getElementById('s1-next').disabled = true;
+  go('screen-intro');
+}
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(r => console.log('SW registered'))
+      .catch(e => console.log('SW error', e));
+  });
+}
+</script>
+</body>
+</html>

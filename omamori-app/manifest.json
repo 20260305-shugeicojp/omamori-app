@@ -1,0 +1,25 @@
+{
+  "name": "わたしの価値観とお守り言葉",
+  "short_name": "お守り言葉",
+  "description": "手芸・ハンドメイド作家・講師のための価値観ワーク",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#265FAC",
+  "theme_color": "#265FAC",
+  "lang": "ja",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
